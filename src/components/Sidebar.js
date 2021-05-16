@@ -17,11 +17,11 @@ export default function Sidebar({
   return (
     <SidebarContainer>
       <Card>
-        <SectionHeading>Projects</SectionHeading>
+        <SectionHeading>Menü</SectionHeading>
         <SectionList>
-          {projects.map((project) => (
+          {projects.map((project, index) => (
             <SectionListItem
-              key={project.partition}
+              key={index}
               onClick={() => setCurrentProject(project)}
               isSelected={project.partition === currentProject?.partition}
             >
@@ -75,7 +75,7 @@ function UserDetails({ user, handleLogout, handleEditPermissions }) {
     <UserDetailsContainer>
       <Username>{user.profile.email}</Username>
       <TextButton onClick={handleEditPermissions}>Manage My Project</TextButton>
-      <TextButton onClick={handleLogout}>Log Out</TextButton>
+      <TextButton onClick={handleLogout}>Çıkış</TextButton>
     </UserDetailsContainer>
   );
 }
