@@ -107,7 +107,7 @@ const Page = () => {
         </div>
       )}
 
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth>
         <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
         <DialogContent>
           <form noValidate onSubmit={handleSubmit(onSubmit)} id="aform" >

@@ -87,7 +87,7 @@ const Page = () => {
             console.log(await idari.createTez(record))
         }
         else if(ActiveForm.id === "form_oneri"){
-            const {user_id:oneren} = app.currentUser;
+            const {user_id:oneren} = app.currentUser.customData;
             const {user_id:ogrenci} = selectedOgrenci;
             const record = {...data, oneren: new ObjectId(oneren), ogrenci: new ObjectId(ogrenci)};
             console.log(record)
@@ -106,7 +106,7 @@ const Page = () => {
                 <DataGrid disableMultipleSelection={true} rows={ogrenci} columns={columns} pageSize={5} components={{ Toolbar: CustomToolbar }} onRowSelected={handleRowSelected} />
             </div>
 
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth>
                 <DialogTitle id="form-dialog-title">{ActiveForm.title}</DialogTitle>
                 <DialogContent>
                     <ActiveForm.form onSubmit={onSubmit} handleClose={handleClose} id={ActiveForm.id} form={{ register, handleSubmit, formState: { errors } }} />

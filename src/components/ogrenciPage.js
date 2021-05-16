@@ -83,7 +83,7 @@ const Page = () => {
             <div style={{ height: 400, width: '100%' }}>
                 <DataGrid rows={oneriler} columns={columns} pageSize={5}  disableMultipleSelection={true} />
             </div>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth>
                 <DialogTitle id="form-dialog-title">{app.currentUser.customData.adi}</DialogTitle>
                 <DialogContent>
                     <TezOneriForm onSubmit={handleSubmit(onSubmit)} handleClose={handleClose} id="oneri" form={{ register, handleSubmit, formState: { errors } }}/>

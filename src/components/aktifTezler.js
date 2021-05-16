@@ -75,10 +75,10 @@ const Page = () => {
     return (
         <div>
             <div style={{ height: 400, width: '100%' }}>
-                <DataGrid rows={tezler} columns={columns} pageSize={5} components={{ Toolbar: CustomToolbar }} onRowSelected={handleRowSelected} disableMultipleSelection={true} />
+                <DataGrid rows={tezler} columns={columns} pageSize={5} disableMultipleSelection={true} />
             </div>
 
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth>
                 <DialogTitle id="form-dialog-title">Tez Önerisi </DialogTitle>
                 <DialogContent>
                     <form noValidate onSubmit={handleSubmit(onSubmit)} id="aoneri" >

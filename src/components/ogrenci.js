@@ -80,7 +80,7 @@ const Page = () => {
         <DataGrid rows={ogrenci} columns={columns} pageSize={5} checkboxSelection components={{ Toolbar: CustomToolbar }} />
       </div>
 
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth>
         <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
         <DialogContent>
           <form noValidate onSubmit={handleSubmit(onSubmit)} id="oform" >

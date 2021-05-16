@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import { ObjectId } from "bson";
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -53,7 +54,7 @@ const Page = () => {
 
     useEffect(() => {
         (async () => {
-            setOneriler((await idari.listTezOneri()).map(o => { return { ...o, id: o._id } }))
+            setOneriler((await idari.listTezOneri({oneren:new ObjectId(app.currentUser.customData.user_id)})).map(o => { return { ...o, id: o._id } }))
         })()
     }, [])
     const app = useRealmApp()
@@ -74,10 +75,10 @@ const Page = () => {
     return (
         <div>
             <div style={{ height: 400, width: '100%' }}>
-                <DataGrid rows={oneriler} columns={columns} pageSize={5} components={{ Toolbar: CustomToolbar }} onRowSelected={handleRowSelected} disableMultipleSelection={true} />
+                <DataGrid rows={oneriler} columns={columns} pageSize={5}  disableMultipleSelection={true} />
             </div>
 
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth>
                 <DialogTitle id="form-dialog-title">Tez Önerisi </DialogTitle>
                 <DialogContent>
                     <form noValidate onSubmit={handleSubmit(onSubmit)} id="aoneri" >
