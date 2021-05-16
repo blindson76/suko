@@ -29,6 +29,8 @@ import Ogrenci from './components/ogrenci'
 import TezOneri from './components/tezOneri'
 import OnerilerDetay from './components/onerilerDetay'
 import OgrenciPage from './components/ogrenciPage'
+import AktifTezler from './components/aktifTezler'
+import Istatistik from './components/istatistik'
 const pages = {
   "IDARI" : [
     {
@@ -45,6 +47,11 @@ const pages = {
       title: "Öğrenci",
       page:Ogrenci,
       path:"/ogrenci"
+    },
+    {
+      title: "İstatistik",
+      page:Istatistik,
+      path:"/ogrenci"
     }
   ],
   
@@ -57,6 +64,11 @@ const pages = {
     {
       title: "Öneri Geçmişi",
       page: OnerilerDetay,
+      path:"/enstitu"
+    },
+    {
+      title: "Aktif Danışmanlıklar",
+      page: AktifTezler,
       path:"/enstitu"
     }
   ],

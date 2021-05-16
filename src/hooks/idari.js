@@ -107,6 +107,12 @@ export function ProvideIdari({ children }) {
         let list =  await mongodb.db("tez").collection("Tez").find(find || {})
         return list;
     }
+    const listUser = async (find) => {
+
+        const mongodb = app?.currentUser?.mongoClient("mongodb-atlas");
+        let list =  await mongodb.db("tez").collection("UserData").find(find || {})
+        return list;
+    }
     return {
         listABD,
         listBolum,
@@ -121,7 +127,8 @@ export function ProvideIdari({ children }) {
         listTezOneri,
         createTezOneri,
         listTez,
-        createTez
+        createTez,
+        listUser
     };
   }
   

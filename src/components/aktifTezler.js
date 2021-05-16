@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { ObjectId } from "bson";
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import { ObjectId } from "bson";
+
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -15,87 +16,106 @@ import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@material-ui/data-grid'
 
-import TezOneriForm from './form/tezOneri'
-import TezAtamaForm from './form/tezAtama'
 const schema = yup.object().shape({
     //email: yup.string().email().required()
 });
 
 const columns = [
     { field: '_id', hide: true },
-    { field: 'oneren', headerName: "Yapan", width: 230 },
+    { field: 'ogrenci', headerName: "Öğrenci", width: 230 },
     { field: 'konu', headerName: 'Konu', width: 230 },
     { field: 'aciklama', headerName: 'Açıklama', width: 230 }
 ];
 
+
 const Page = () => {
-    const app = useRealmApp()
     const classes = useStyles();
     const idari = useProvideIdari();
+    const [tezler, setTezler] = useState([])
     const [open, setOpen] = useState(false);
-    const [oneriler, setOneriler] = useState([])
-    const [tez, setTez] = useState();
+    const [bolum, setBolum] = useState([]);
+    const [selectedOgrenci, setSelectedOgrenci] = useState();
 
-    useEffect(()=>{
-        (async () => {
-            setTez((await idari.listTez({ogrenci:new ObjectId(app.currentUser.id)})).map(o => { return { ...o, id: o._id } }))
-        })()
-    },[])
-    
     useEffect(() => {
         (async () => {
-            setOneriler((await idari.listTezOneri({ogrenci:new ObjectId(app.currentUser.customData.user_id)})).map(o => { return { ...o, id: o._id } }))
+            setBolum(await idari.listBolum())
         })()
     }, [])
-    const handleOpen = (form) => {
-        setOpen(true)
+    const handleOpen = () => {
+        setOpen(state => {
+            return true
+        })
     }
+    const CustomToolbar = () => (
+        <GridToolbarContainer>
+            <GridToolbarExport onClick={handleOpen} />
+        </GridToolbarContainer>
+    )
 
-
+    useEffect(() => {
+        (async () => {
+            setTezler((await idari.listTez({danisman:new ObjectId(app.currentUser.customData.user_id)})).map(o => { return { ...o, id: o._id } }))
+        })()
+    }, [])
+    const app = useRealmApp()
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     });
-
     const onSubmit = async data => {
-        let {user_id:oneren} = app.currentUser.customData;
-        oneren = new ObjectId(oneren);
-        const record = {...data, ogrenci: oneren, oneren};
+        const {id:oneren, id:ogrenci } = selectedOgrenci;
+        const record = {oneren, ogrenci, ...data}
         console.log(await idari.createTezOneri(record))
-        return;
-        record.danisman = new ObjectId(record.danisman);
-        record.destekleyen = record.destekleyen.split()
-        console.log(await idari.createTez(record))
     };
-
+    const handleRowSelected = ({data, isSelected}) => {
+        setSelectedOgrenci(isSelected ? data : null)
+    }
     const handleClose = () => {
         setOpen(false)
     }
     return (
         <div>
-            <h1>Tez Durumu</h1>
-            {tez && tez.length>0 ?  (
-                <div>{tez[0].konu}</div>
-            ): 
-            (<div>
-                <Button variant="contained" color="primary" onClick={()=>setOpen(true)} >Tez Öner</Button>
-            </div>)}
-            <h1>Yapılan Tez Önerileri</h1>
             <div style={{ height: 400, width: '100%' }}>
-                <DataGrid rows={oneriler} columns={columns} pageSize={5}  disableMultipleSelection={true} />
+                <DataGrid rows={tezler} columns={columns} pageSize={5} components={{ Toolbar: CustomToolbar }} onRowSelected={handleRowSelected} disableMultipleSelection={true} />
             </div>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">{app.currentUser.customData.adi}</DialogTitle>
-                <DialogContent>
-                    <TezOneriForm onSubmit={handleSubmit(onSubmit)} handleClose={handleClose} id="oneri" form={{ register, handleSubmit, formState: { errors } }}/>
-                </DialogContent>
 
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Tez Önerisi </DialogTitle>
+                <DialogContent>
+                    <form noValidate onSubmit={handleSubmit(onSubmit)} id="aoneri" >
+                        <div>
+                            <TextField
+                                error={errors.konu}
+                                helperText={errors.konu?.message}
+                                variant="outlined"
+                                margin="normal"
+                                label="Tez Konusu"
+                                fullWidth
+                                autoFocus
+                                {...register("konu")}
+                            />
+                        </div>
+                        <div>
+                            <TextField
+                                error={errors.aciklama}
+                                helperText={errors.aciklama?.message}
+                                variant="outlined"
+                                margin="normal"
+                                label="Açıklama"
+                                fullWidth
+                                autoFocus
+                                {...register("aciklama")}
+                            />
+                        </div>
+
+                    </form>
+                </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
                         Cancel
               </Button>
                     <Button
                         type="submit"
-                        form="oneri"
+                        form="aoneri"
                         fullWidth
                         variant="contained"
                         color="primary"

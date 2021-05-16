@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ObjectId } from "bson";
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -30,6 +31,14 @@ const columns = [
   { field: 'email', headerName: 'Email', width: 230 },
 ];
 
+const columnsTez = [
+  { field: '_id', hide: true },
+  { field: 'konu', headerName: 'Konu', width: 230 },
+  { field: 'aciklama', headerName: 'Açıklama', width: 230 },
+  { field: 'ogrenci', headerName: 'Öğrenci', width: 230 },
+  { field: 'durum', headerName: 'Durum', width: 230 },
+  { field: 'tarih', headerName: 'Bitiş Tarihi', width: 230 },
+];
 
 const Page = () => {
   const classes = useStyles();
@@ -37,6 +46,8 @@ const Page = () => {
   const [personel, setPersonel] = useState([])
   const [open, setOpen] = useState(false);
   const [enstitu, setEnstitu] = useState([]);
+  const [selectedHoca, setSelectedHoca] = useState();
+  const [tez, setTez] = useState([]);
 
   useEffect(() => {
       (async () => {
@@ -59,6 +70,13 @@ const Page = () => {
       setPersonel((await idari.listPersonel()).map(o => { return { ...o, id: o._id } }))
     })()
   }, [])
+  useEffect(() => {
+    if(!selectedHoca)
+      return;
+    (async () => {
+      setTez((await idari.listTez({danisman:new ObjectId(selectedHoca.user_id)})).map(o => { return { ...o, id: o._id } }))
+    })()
+  }, [selectedHoca])
   const app = useRealmApp()
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
@@ -73,11 +91,21 @@ const Page = () => {
   const handleClose = () => {
     setOpen(false)
   }
+  const handleRowSelected = ({data, isSelected}) => {
+    setSelectedHoca(isSelected ? data : null)
+  }
   return (
     <div>
       <div style={{ height: 400, width: '100%' }}>
-        <DataGrid rows={personel} columns={columns} pageSize={5} checkboxSelection components={{ Toolbar: CustomToolbar }} />
+        <DataGrid rows={personel} columns={columns} pageSize={5} components={{ Toolbar: CustomToolbar }} onRowSelected={handleRowSelected} />
       </div>
+
+      {tez && tez.length>0 && (
+        <div style={{ height: 400, width: '100%' }}>
+        <h1>Danışmanın tezleri</h1>
+          <DataGrid rows={tez} columns={columnsTez} pageSize={5} disableSelectionOnClick={true} />
+        </div>
+      )}
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
