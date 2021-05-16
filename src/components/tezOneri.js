@@ -78,18 +78,21 @@ const Page = () => {
     });
     const onSubmit = async data => {
         if(ActiveForm.id === "form_atama"){
-            const {user_id:danisman} = app.currentUser;
+            const {user_id:danisman} = app.currentUser.customData;
             const {user_id:ogrenci} = selectedOgrenci;
-            const record = {...data, danisman, ogrenci, durum:"DEVAM", tarih:new Date()};
+            const record = {...data, danisman, ogrenci: new ObjectId(ogrenci), durum:"DEVAM", tarih:new Date()};
             record.danisman = new ObjectId(record.danisman);
             record.destekleyen = record.destekleyen.split()
+            console.log(record)
             console.log(await idari.createTez(record))
         }
-        //console.log(data)
-        return;
-        const { id: oneren, id: ogrenci } = selectedOgrenci;
-        const record = { oneren, ogrenci, ...data }
-        //console.log(await idari.createTezOneri(record))
+        else if(ActiveForm.id === "form_oneri"){
+            const {user_id:oneren} = app.currentUser;
+            const {user_id:ogrenci} = selectedOgrenci;
+            const record = {...data, oneren: new ObjectId(oneren), ogrenci: new ObjectId(ogrenci)};
+            console.log(record)
+            console.log(await idari.createTezOneri(record))
+        }
     };
     const handleRowSelected = ({ data, isSelected }) => {
         setSelectedOgrenci(isSelected ? data : null)

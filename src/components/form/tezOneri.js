@@ -2,12 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import { useForm } from 'react-hook-form';
 
-export default ({form, onSubmit, id, ...props}) => {
-    const { register, handleSubmit, formState: { errors } } = form;
+import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup';
+
+const schema = yup.object().shape({
+    //email: yup.string().email().required()
+});
+export default ({ onSubmit, id, handleClose, ...props}) => {
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(schema)
+    });
     return (
 
-        <form noValidate onSubmit={onSubmit} id={id} >
+        <form noValidate onSubmit={handleSubmit(onSubmit)} id={id} >
             <div>
                 <TextField
                     error={errors.konu}
