@@ -9,6 +9,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AlarmIcon from '@material-ui/icons/Alarm';
+import PersonAdd from '@material-ui/icons/PersonAdd'
+
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import { useRealmApp } from '../RealmApp';
@@ -61,7 +66,9 @@ const Page = () => {
   }
   const CustomToolbar = () => (
     <GridToolbarContainer>
-      <GridToolbarExport onClick={handleOpen} />
+      <IconButton color="primary" aria-label="add to shopping cart">
+        <PersonAdd  onClick={handleOpen} />
+      </IconButton>
     </GridToolbarContainer>
   )
 
@@ -108,7 +115,7 @@ const Page = () => {
       )}
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth>
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogTitle id="form-dialog-title">Personel Ekle</DialogTitle>
         <DialogContent>
           <form noValidate onSubmit={handleSubmit(onSubmit)} id="aform" >
             <div>

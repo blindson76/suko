@@ -11,12 +11,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import { useRealmApp } from '../RealmApp';
-import { FormControl } from '@material-ui/core';
+import { FormControl, IconButton } from '@material-ui/core';
 import { ProvideIdari, useProvideIdari } from '../hooks/idari'
 import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@material-ui/data-grid'
+import PersonAdd from '@material-ui/icons/PersonAdd';
 
 const schema = yup.object().shape({
   email: yup.string().email().required()
@@ -50,8 +51,10 @@ const Page = () => {
     })
   }
   const CustomToolbar = () => (
-    <GridToolbarContainer>
-      <GridToolbarExport onClick={handleOpen} />
+    <GridToolbarContainer>      
+      <IconButton color="primary" aria-label="add to shopping cart">
+        <PersonAdd  onClick={handleOpen} />
+      </IconButton>
     </GridToolbarContainer>
   )
 
@@ -81,7 +84,7 @@ const Page = () => {
       </div>
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth>
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogTitle id="form-dialog-title">Öğrenci Ekle</DialogTitle>
         <DialogContent>
           <form noValidate onSubmit={handleSubmit(onSubmit)} id="oform" >
             <div>
