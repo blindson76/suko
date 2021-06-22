@@ -52,6 +52,18 @@ const pages = {
       title: "İstatistik",
       page:Istatistik,
       path:"/ogrenci"
+    },
+    
+    {
+      title: "Bilgilerim",
+      page: OgrenciPage,
+      path:"/enstitu"
+    },
+    
+    {
+      title: "Tez Öneri",
+      page: TezOneri,
+      path:"/enstitu"
     }
   ],
   

@@ -52,15 +52,27 @@ export function ProvideIdari({ children }) {
         const mongodb = app?.currentUser?.mongoClient("mongodb-atlas");
         return await mongodb.db("tez").collection("ABD").insertOne(data)
     }
+    const deleteABD = async (_id) => {
+        const mongodb = app?.currentUser?.mongoClient("mongodb-atlas");
+        return await mongodb.db("tez").collection("ABD").deleteOne({_id})
+    }
     
     const insertBolum = async (data) => {
         const mongodb = app?.currentUser?.mongoClient("mongodb-atlas");
         return await mongodb.db("tez").collection("Bolum").insertOne(data)
     }
     
+    const deleteBolum = async (_id) => {
+        const mongodb = app?.currentUser?.mongoClient("mongodb-atlas");
+        return await mongodb.db("tez").collection("Bolum").deleteOne({_id})
+    }
     const insertEnstitu = async (data) => {
         const mongodb = app?.currentUser?.mongoClient("mongodb-atlas");
         return await mongodb.db("tez").collection("Enstitu").insertOne(data)
+    }
+    const deleteEnstitu= async (_id) => {
+        const mongodb = app?.currentUser?.mongoClient("mongodb-atlas");
+        return await mongodb.db("tez").collection("Enstitu").deleteOne({_id})
     }
     const createPersonel = async (data) => {
         const {email, password, ...rest} = data;
@@ -128,7 +140,10 @@ export function ProvideIdari({ children }) {
         createTezOneri,
         listTez,
         createTez,
-        listUser
+        listUser,
+        deleteABD,
+        deleteBolum,
+        deleteEnstitu
     };
   }
   
