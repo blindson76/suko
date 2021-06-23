@@ -53,6 +53,7 @@ const Page = () => {
   const [enstitu, setEnstitu] = useState([]);
   const [selectedHoca, setSelectedHoca] = useState();
   const [tez, setTez] = useState([]);
+  const [count, setCount] = useState(0)
 
   useEffect(() => {
       (async () => {
@@ -76,12 +77,12 @@ const Page = () => {
     (async () => {
       setPersonel((await idari.listPersonel()).map(o => { return { ...o, id: o._id } }))
     })()
-  }, [])
+  }, [count])
   useEffect(() => {
     if(!selectedHoca)
       return;
     (async () => {
-      setTez((await idari.listTez({danisman:new ObjectId(selectedHoca.user_id)})).map(o => { return { ...o, id: o._id } }))
+      setTez((await idari.listTez({danisman:selectedHoca._id})).map(o => { return { ...o, id: o._id } }))
     })()
   }, [selectedHoca])
   const app = useRealmApp()
@@ -94,6 +95,11 @@ const Page = () => {
       password: "123456",
       ...data,
     }))
+    
+    setOpen(()=>{
+      setCount(c=>c+1)
+      return false;
+    })
   };
   const handleClose = () => {
     setOpen(false)

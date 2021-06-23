@@ -44,6 +44,7 @@ const Page = () => {
     const [personel, setPersonel] = useState([]);
     const [selectedOgrenci, setSelectedOgrenci] = useState();
     const [ActiveForm, setActiveForm] = useState(formDefinitions["oneri"]);
+    const [count, setCount] = useState(0)
 
     const columns = [
         { field: '_id', hide: true },
@@ -105,10 +106,14 @@ const Page = () => {
         console.log(data)
         const { danisman } = selectedOgrenci;
         const { _id: ogrenci } = selectedOgrenci;
-        const record = { ...data, danisman, ogrenci, durum: "DEVAM", tarih: new Date() };
+        const record = { ...data, danisman, ogrenci, durum: "DEVAM EDİYOR", tarih: new Date() };
         record.destekleyen = record.destekleyen.split()
         console.log(record)
         console.log(await idari.createTez(record))
+        setOpen(()=>{
+            setCount(c=>c+1)
+            return false;
+        })
     };
     const handleRowSelected = ({ data, isSelected }) => {
         setSelectedOgrenci(isSelected ? data : null)

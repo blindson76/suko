@@ -108,6 +108,18 @@ export function ProvideIdari({ children }) {
 
         //return await mongodb.db("tez").collection("Enstitu").insertOne(data)
     } 
+    const updateTez = async (data) => {
+        console.log(data)
+        const mongodb = app?.currentUser?.mongoClient("mongodb-atlas");
+        const query = {_id:{$in:data.tez}}
+        const update = {$set:{durum:data.durum}}
+        console.log(query, update)
+        let result = await mongodb.db("tez").collection("Tez").updateMany(query, update);
+        console.log(result)
+
+
+        //return await mongodb.db("tez").collection("Enstitu").insertOne(data)
+    } 
   
     const createTezOneri = async (data) => {
         const mongodb = app?.currentUser?.mongoClient("mongodb-atlas");
@@ -155,7 +167,8 @@ export function ProvideIdari({ children }) {
         deleteABD,
         deleteBolum,
         deleteEnstitu,
-        updateOgrenci
+        updateOgrenci,
+        updateTez
     };
   }
   

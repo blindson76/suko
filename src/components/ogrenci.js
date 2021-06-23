@@ -36,6 +36,7 @@ const Page = () => {
   const [personel, setPersonel] = useState([]);
   const [mode, setMode] = useState(null)
   const [selection, setSelection] = useState([])
+  const [count, setCount] = useState(0)
   
 const columns = [
   { field: '_id', hide: true },
@@ -90,7 +91,7 @@ const columns = [
     (async () => {
       setOgrenci((await idari.listOgrenci()).map(o => { return { ...o, id: o._id } }))
     })()
-  }, [])
+  }, [count])
   const app = useRealmApp()
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
@@ -109,6 +110,10 @@ const columns = [
       console.log(await idari.updateOgrenci({students:selection,danisman}))
 
     }
+    setOpen(()=>{
+      setCount(c=>c+1)
+      return false;
+    })
   };
   const handleClose = () => {
     setOpen(false)
