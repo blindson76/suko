@@ -9,6 +9,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import _ from 'lodash'
 import { useRealmApp } from '../RealmApp';
 import { ProvideIdari, useProvideIdari } from '../hooks/idari'
 import { useForm } from 'react-hook-form';
@@ -20,12 +21,6 @@ const schema = yup.object().shape({
     //email: yup.string().email().required()
 });
 
-const columns = [
-    { field: '_id', hide: true },
-    { field: 'ogrenci', headerName: "Öğrenci", width: 230 },
-    { field: 'konu', headerName: 'Konu', width: 230 },
-    { field: 'aciklama', headerName: 'Açıklama', width: 230 }
-];
 
 
 const Page = () => {
@@ -34,8 +29,41 @@ const Page = () => {
     const [tezler, setTezler] = useState([])
     const [open, setOpen] = useState(false);
     const [bolum, setBolum] = useState([]);
+    const [personel, setPersonel] = useState([]);
+    const [ogrenci, setOgrenci] = useState([])
     const [selectedOgrenci, setSelectedOgrenci] = useState();
 
+    const columns = [
+        { field: '_id', hide: true },
+        { field: 'ogrenci', headerName: "Öğrenci", width: 230, valueGetter: params => {
+            let ogr = _.find(ogrenci,{_id:params.row.ogrenci})
+            if(ogr){
+              return ogr.adi + " " + ogr.soyadi
+            }
+            
+          } },
+        { field: 'konu', headerName: 'Konu', width: 230 },
+        { field: 'aciklama', headerName: 'Açıklama', width: 230 },
+        { field: 'durum', headername: 'Durum', width: 230},
+        { field: 'danisman', headerName: 'Danışman', width: 230, valueGetter: params => {
+            let danisman = _.find(personel,{_id:params.row.danisman})
+            if(danisman){
+              return danisman.adi + " " + danisman.soyadi
+            }
+            
+          }}
+    ];
+    
+    useEffect(() => {
+        (async () => {
+            setPersonel(await idari.listPersonel())
+        })()
+    }, [])
+    useEffect(() => {
+        (async () => {
+            setOgrenci(await idari.listOgrenci())
+        })()
+    }, [])
     useEffect(() => {
         (async () => {
             setBolum(await idari.listBolum())
@@ -54,7 +82,7 @@ const Page = () => {
 
     useEffect(() => {
         (async () => {
-            setTezler((await idari.listTez({danisman:new ObjectId(app.currentUser.customData.user_id)})).map(o => { return { ...o, id: o._id } }))
+            setTezler((await idari.listTez({})).map(o => { return { ...o, id: o._id } }))
         })()
     }, [])
     const app = useRealmApp()

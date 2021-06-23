@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-
+import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+
+import _ from 'lodash'
 
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -20,17 +22,9 @@ import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@material-ui/
 import PersonAdd from '@material-ui/icons/PersonAdd';
 
 const schema = yup.object().shape({
-  email: yup.string().email().required()
+  //email: yup.string().email().required()
 });
 
-const columns = [
-  { field: '_id', hide: true },
-  { field: 'ogenci_no', headerName: "No", width: 80 },
-  { field: 'adi', headerName: 'Adı', width: 230 },
-  { field: 'soyadi', headerName: 'Soy adı', width: 230 },
-  { field: 'email', headerName: 'Email', width: 230 },
-  { field: 'bolum', headerName: 'Bölüm', width: 230 },
-];
 
 
 const Page = () => {
@@ -39,21 +33,55 @@ const Page = () => {
   const [ogrenci, setOgrenci] = useState([])
   const [open, setOpen] = useState(false);
   const [bolum, setBolum] = useState([]);
+  const [personel, setPersonel] = useState([]);
+  const [mode, setMode] = useState(null)
+  const [selection, setSelection] = useState([])
+  
+const columns = [
+  { field: '_id', hide: true },
+  { field: 'ogenci_no', headerName: "No", width: 80 },
+  { field: 'adi', headerName: 'Adı', width: 230 },
+  { field: 'soyadi', headerName: 'Soy adı', width: 230 },
+  { field: 'email', headerName: 'Email', width: 230 },
+  { field: 'bolum', headerName: 'Bölüm', width: 230, valueGetter: params => {
+    let _bolum = _.find(bolum,{_id:params.row.bolum})
+    if(_bolum){
+      return _bolum.adi
+    }
+    
+  } },
+  { field: 'danisman', headerName: 'Danışman', width: 230, valueGetter: params => {
+    let danisman = _.find(personel,{_id:params.row.danisman})
+    if(danisman){
+      return danisman.adi + " " + danisman.soyadi
+    }
+    
+  }},
+];
 
   useEffect(() => {
-      (async () => {
-          setBolum(await idari.listBolum())
-      })()
-  },[])
-  const handleOpen = () => {
-    setOpen(state => {
-      return true
+    (async () => {
+      setBolum(await idari.listBolum())
+    })()
+  }, [])
+  useEffect(() => {
+    (async () => {
+      setPersonel(await idari.listPersonel())
+    })()
+  }, [])
+  const handleOpen = (mode) => {
+    setOpen(() => {
+      setMode(mode)
+      return true;
     })
   }
   const CustomToolbar = () => (
-    <GridToolbarContainer>      
+    <GridToolbarContainer>
       <IconButton color="primary" aria-label="add to shopping cart">
-        <PersonAdd  onClick={handleOpen} />
+        <PersonAdd onClick={() => { handleOpen('ogrenciEkle') }} />
+      </IconButton>
+      <IconButton color="primary" aria-label="add to shopping cart">
+        <TransferWithinAStationIcon onClick={() => { handleOpen('danismanAta') }} />
       </IconButton>
     </GridToolbarContainer>
   )
@@ -68,83 +96,109 @@ const Page = () => {
     resolver: yupResolver(schema)
   });
   const onSubmit = async data => {
-    console.log(await idari.createOgrenci({
-      type: "OGRENCI",
-      password: "123456",
-      ...data,
-    }))
+    if(mode === "ogrenciEkle"){
+      console.log(await idari.createOgrenci({
+        type: "OGRENCI",
+        password: "123456",
+        ...data,
+      }))
+    }
+
+    else if(mode === "danismanAta"){
+      let danisman = data.danisman;
+      console.log(await idari.updateOgrenci({students:selection,danisman}))
+
+    }
   };
   const handleClose = () => {
     setOpen(false)
   }
+  const handleSelectionModel = (data) => {
+    setSelection(data.selectionModel)
+}
   return (
     <div>
       <div style={{ height: 400, width: '100%' }}>
-        <DataGrid rows={ogrenci} columns={columns} pageSize={5} checkboxSelection components={{ Toolbar: CustomToolbar }} />
+        <DataGrid rows={ogrenci} columns={columns} pageSize={5} selectionModel={selection} onSelectionModelChange={handleSelectionModel} checkboxSelection components={{ Toolbar: CustomToolbar }} />
       </div>
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth>
         <DialogTitle id="form-dialog-title">Öğrenci Ekle</DialogTitle>
         <DialogContent>
           <form noValidate onSubmit={handleSubmit(onSubmit)} id="oform" >
-            <div>
+            {mode === "ogrenciEkle" &&
               <div>
-                <FormControl >
-                  <Select
-                    labelId="demo-simple-select-label"
-                    {...register("bolum")}
-                  >{bolum.map((e,i) => (
-                    <MenuItem key={e._id} value={e._id} >{e.adi}</MenuItem>
-                ))}</Select>
-                </FormControl>
-              </div>
-              <TextField
-                error={errors.email}
-                helperText={errors.email?.message}
-                variant="outlined"
-                margin="normal"
-                label="Email Adresi"
-                autoComplete="email"
-                autoFocus
-                {...register("email")}
-              />
-            </div>
-            <div>
-              <TextField
-                error={errors.adi}
-                helperText={errors.adi?.message}
-                variant="outlined"
-                margin="normal"
-                label="İsim"
-                {...register("adi")}
-              />
-              <TextField
-                error={errors.soyadi}
-                helperText={errors.soyadi?.message}
-                variant="outlined"
-                margin="normal"
-                name="soyadi"
-                label="Soyadı"
-                {...register("soyadi")}
-              />
+                <div>
+                  <FormControl >
+                    <Select
+                      labelId="demo-simple-select-label"
+                      {...register("bolum")}
+                    >{bolum.map((e, i) => (
+                      <MenuItem key={e._id} value={e._id} >{e.adi}</MenuItem>
+                    ))}</Select>
+                  </FormControl>
+                </div>
 
-              <TextField
-                error={errors.ogrenci_no}
-                helperText={errors.ogrenci_no?.message}
-                variant="outlined"
-                margin="normal"
-                name="ogrenci_no"
-                label="Öğrenci No"
-                {...register("ogrenci_no")}
-              />
-            </div>
+                <div>
+                  <TextField
+                    error={errors.email}
+                    helperText={errors.email?.message}
+                    variant="outlined"
+                    margin="normal"
+                    label="Email Adresi"
+                    autoComplete="email"
+                    autoFocus
+                    {...register("email")}
+                  />
+                </div>
+                <div>
+                  <TextField
+                    error={errors.adi}
+                    helperText={errors.adi?.message}
+                    variant="outlined"
+                    margin="normal"
+                    label="İsim"
+                    {...register("adi")}
+                  />
+                  <TextField
+                    error={errors.soyadi}
+                    helperText={errors.soyadi?.message}
+                    variant="outlined"
+                    margin="normal"
+                    name="soyadi"
+                    label="Soyadı"
+                    {...register("soyadi")}
+                  />
+                </div>
+                <div>
 
+                  <TextField
+                    error={errors.ogrenci_no}
+                    helperText={errors.ogrenci_no?.message}
+                    variant="outlined"
+                    margin="normal"
+                    name="ogrenci_no"
+                    label="Öğrenci No"
+                    {...register("ogrenci_no")}
+                  />
+                </div>
+              </div>}
+
+
+            <FormControl >
+              <Select
+                labelId="demo-simple-select-label"
+                {...register("danisman")}
+              >{personel.map((e, i) => (
+                <MenuItem key={e._id} value={e._id} >{e.adi} {e.soyadi}</MenuItem>
+              ))}</Select>
+            </FormControl>
           </form>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
-              </Button>
+          </Button>
           <Button
             type="submit"
             form="oform"

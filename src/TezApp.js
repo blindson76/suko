@@ -48,23 +48,22 @@ const pages = {
       page:Ogrenci,
       path:"/ogrenci"
     },
+    
+    {
+      title: "Tez Atama",
+      page: TezOneri,
+      path:"/enstitu"
+    },
+    {
+      title: "Tez Yönetimi",
+      page: AktifTezler,
+      path:"/enstitu"
+    },
     {
       title: "İstatistik",
       page:Istatistik,
       path:"/ogrenci"
     },
-    
-    {
-      title: "Bilgilerim",
-      page: OgrenciPage,
-      path:"/enstitu"
-    },
-    
-    {
-      title: "Tez Öneri",
-      page: TezOneri,
-      path:"/enstitu"
-    }
   ],
   
   "AKADEMIK" : [
@@ -76,11 +75,6 @@ const pages = {
     {
       title: "Öneri Geçmişi",
       page: OnerilerDetay,
-      path:"/enstitu"
-    },
-    {
-      title: "Aktif Danışmanlıklar",
-      page: AktifTezler,
       path:"/enstitu"
     }
   ],
@@ -128,11 +122,6 @@ export default function () {
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               Tez Takip Sistemi
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
             <IconButton color="inherit" onClick={handleSignout} >
               <ExitToApp />
             </IconButton>
